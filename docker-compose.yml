@@ -14,7 +14,9 @@ services:
     environment:
       - MYSQL_DATABASE=nodedb
       - MYSQL_ROOT_PASSWORD=root
-    networks:
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u root --password=root
+    networks: 
       - node-network
 
   nodeserver:
@@ -31,7 +33,8 @@ services:
       - /usr/src/app/node_modules
     tty: true
     depends_on:
-      - dbserver
+      dbserver:
+        condition: service_healthy
 
   nginx:
     build:
